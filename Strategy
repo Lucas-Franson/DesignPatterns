@@ -1,0 +1,66 @@
+namespace strategy{
+  
+  public class TesteDeImpostos 
+  {
+      static void Main(String[] args) 
+      {
+          Imposto iss = new ISS(); //Instancia imposto de ISS
+          Imposto icms = new ICMS(); //Instancia imposto de ICMS
+          Orcamento orcamento = new Orcamento(500.0); //Instancia orçamento
+          CalculadorDeImposto calculador = new CalculadorDeImposto(); //Instancia Calculo de Imposto
+
+          // Calculando o ISS
+          calculador.RealizaCalculo(orcamento, iss);
+
+          // Calculando o ICMS        
+          calculador.RealizaCalculo(orcamento, icms);
+      }
+  }
+  
+  public interface Imposto 
+  {
+      double Calcula(Orcamento orcamento); //Interface de Imposto
+  }      
+
+  public class ICMS : Imposto 
+  {
+      //Sobrescreve método da interface de Imposto
+      public double Calcula(Orcamento orcamento) 
+      {
+          return orcamento.Valor * 0.1;
+      }
+  }
+
+  public class ISS : Imposto 
+  {
+      //Sobrescreve método da interface de Imposto
+      public double Calcula(Orcamento orcamento) 
+      {
+          return orcamento.Valor * 0.06;
+      }
+  }
+  
+  public class CalculadorDeImpostos 
+  {
+      //Método que passa o orcamento e o tipo de imposto
+      //usando o imposto da interface
+      public void RealizaCalculo(Orcamento orcamento, Imposto imposto) 
+      {        
+          double valor = imposto.Calcula(orcamento); 
+          Console.WriteLine(valor);
+      }
+  }
+  
+  public class Orcamento 
+  {
+      //Atributo de orçamento
+      public double Valor { get; private set; }
+
+      //Getter de valor
+      public Orcamento(double valor) 
+      {
+          this.Valor = valor;
+      }
+  }
+  
+}
