@@ -1,0 +1,80 @@
+namespace TemplateMethod{
+
+  //Usando partes da codificação em strategy
+  public class Orcamento 
+  {
+      //Atributo de orçamento
+      public double Valor { get; private set; }
+
+      //Getter de valor
+      public Orcamento(double valor) 
+      {
+          this.Valor = valor;
+      }
+  }
+  
+  public interface Imposto 
+  {
+      double Calcula(Orcamento orcamento); //Interface de Imposto
+  } 
+  
+  //A ideia é utilizar uma classe abstrata, com a mesma ideia da interface
+  //alterando os impostos a seguir a regra aplicada aqui
+  public abstract class TemplateDeImpostoCondicional : Imposto 
+  {
+      public double Calcula(Orcamento orcamento) 
+      {
+          if(DeveUsarMaximaTaxacao(orcamento)) 
+          {
+              return MaximaTaxacao(orcamento);
+          }
+          else 
+          {
+              return MinimaTaxacao(orcamento);
+          }
+      }        
+
+      public abstract bool DeveUsarMaximaTaxacao(Orcamento orcamento);
+      public abstract double MaximaTaxacao(Orcamento orcamento);
+      public abstract double MinimaTaxacao(Orcamento orcamento);
+  }
+  
+  //Implementando template de imposto
+  public class IKCV : TemplateDeImpostoCondicional 
+  {      
+      public override bool DeveUsarMaximaTaxacao(Orcamento orcamento) 
+      {
+          return orcamento.Valor > 500 && TemItemMaiorQue100ReaisNo(orcamento);
+      }
+      public override double MaximaTaxacao(Orcamento orcamento) 
+      { 
+          return orcamento.Valor * 0.10;  
+      }
+      public override double MinimaTaxacao(Orcamento orcamento) 
+      {
+          return orcamento.Valor * 0.06;
+      }
+
+      private bool TemItemMaiorQue100ReaisNo(Orcamento orcamento) {
+          // retorna verdadeiro caso algum item seja maior que 100 reais
+      }
+  }
+  
+  //Implementando template de imposto
+  public class ICPP : TemplateDeImpostoCondicional 
+  {      
+      public override bool DeveUsarMaximaTaxacao(Orcamento orcamento) 
+      {
+          return orcamento.Valor >= 500;
+      }
+      public override double MaximaTaxacao(Orcamento orcamento) 
+      { 
+          return orcamento.Valor * 0.07;
+      }
+      public override double MinimaTaxacao(Orcamento orcamento) 
+      {
+          return orcamento.Valor * 0.05;
+      }
+  }
+
+}
