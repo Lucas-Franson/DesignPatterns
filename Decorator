@@ -1,0 +1,57 @@
+namespace decorator{
+
+  public class TesteDeImpostos 
+  {
+      static void Main(String[] args) 
+      {
+          Imposto impostoComplexo = new ISS(new ICMS());
+
+          Orcamento orcamento = new Orcamento(500.0);
+
+          double valor = impostoComplexo.Calcula(orcamento);
+
+          Console.WriteLine(valor);
+      }
+  }
+  
+  public abstract class Imposto 
+  {
+      private readonly Imposto outroImposto;
+
+      public Imposto(Imposto outroImposto) 
+      {
+          this.OutroImposto = outroImposto;
+      }
+
+      // construtor default
+      public Imposto() 
+      {
+          this.OutroImposto = null;
+      }
+
+      protected double CalculoDoOutroImposto(Orcamento orcamento) 
+      {
+          // tratando o caso do proximo imposto nao existir!
+          if(OutroImposto == null) return 0;
+                return OutroImposto.Calcula(orcamento));
+      }
+
+      public abstract double Calcula(Orcamento orcamento);
+  }
+  
+  public class ISS : Imposto 
+  {
+      public ISS(Imposto outroImposto) : base(outroImposto) { } //utiliza o construtor pai
+
+      public double Calcula(Orcamento orcamento) 
+      {
+          return orcamento.Valor * 0.06 + CalculoDoOutroImposto(orcamento);
+      }
+
+      private double CalculoDoOutroImposto(orcamento) 
+      {
+          return OutroImposto.Calcula(orcamento);
+      }
+  }
+  
+}
