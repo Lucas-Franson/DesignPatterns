@@ -1,0 +1,111 @@
+namespace ChainOfResponsability{
+
+  public class Orcamento 
+  {
+      public double Valor { get; private set; }
+      public IList<Item> Itens { get; private set; }
+
+      public Orcamento(double valor) 
+      {
+          this.Valor = valor;
+          this.Itens = new List<Item>();
+      }
+      public void AdicionaItem(Item item) 
+      {
+          itens.Add(item);
+      }
+  }
+  
+  public class Item 
+  {
+      public String Nome { get; private set; }
+      public double Valor { get; private set; }
+
+      public Item(String nome, double valor) 
+      {
+          this.Nome = nome;
+            this.Valor = valor;
+      }
+  }
+  
+  public class CalculadorDeDescontos 
+  {
+      public double Calcula(Orcamento orcamento) 
+      {
+          Desconto d1 = new DescontoPorCincoItens();
+          Desconto d2 = new DescontoPorMaisDeQuinhentosReais();
+          Desconto d3 = new SemDesconto();
+
+          d1.Proximo = d2;
+          d2.Proximo = d3;
+
+          return d1.Desconta(orcamento);
+      }
+  }
+  
+  public interface Desconto 
+  {
+      double Desconta(Orcamento orcamento);
+      Desconto Proximo { get; set; }
+  }
+  
+  public class DescontoPorMaisDeQuinhentosReais : Desconto 
+  {
+      public Desconto Proximo { get; set; }
+
+      public double Desconta(Orcamento orcamento) 
+      {
+          if(orcamento.Valor > 500) 
+          {
+              return orcamento.Valor * 0.07;
+          }
+          else 
+          {
+              return Proximo.Desconta(orcamento);
+          }
+      }
+  }
+  
+  public class DescontoPorCincoItens : Desconto 
+  {
+      public Desconto Proximo { get; set; }
+
+      public double Desconta(Orcamento orcamento) 
+      {
+          if(orcamento.Itens.Count > 5) {
+              return orcamento.Valor * 0.1;
+          }
+          else 
+          {
+              return Proximo.Desconta(orcamento);
+          }
+      }
+  }
+  
+  public class SemDesconto : Desconto 
+  {
+      public Desconto Proximo { get; set; }
+
+      public Double Desconta(Orcamento orcamento) 
+      {
+          return 0;
+      }
+  }
+  
+  public class TestaDescontos 
+  {
+      static void Main(String[] args) 
+      {
+          CalculadorDeDescontos calculador = new CalculadorDeDescontos();
+
+          Orcamento orcamento = new Orcamento(500.0);
+          orcamento.AdicionaItem(new Item("CANETA", 250.0));
+          orcamento.AdicionaItem(new Item("LAPIS", 250.0));
+
+          double desconto = calculador.Calcula(orcamento);
+
+          Console.WriteLine(desconto);
+      }
+  }
+  
+}
